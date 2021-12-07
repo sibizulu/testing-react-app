@@ -5,7 +5,7 @@ import { useSendTransaction } from '@usedapp/core'
 import { utils } from 'ethers'
 import { dummyReceivingWallet } from '../utils'
 
-const Payment = ({ handleFormState, formState }) => {
+const Payment = ({ handleFormState, formState, setMessage }) => {
   const [isLoading, setIsLoading] = useState(false)
   const { sendTransaction, state } = useSendTransaction({
     transactionName: 'Send Ethereum'
@@ -13,6 +13,8 @@ const Payment = ({ handleFormState, formState }) => {
 
   useEffect(() => {
     const handlePaymentConfirmation = async () => {
+      setIsLoading(true)
+
       let assetStatus = false
       try {
         const res = await orderConfirm(
@@ -27,12 +29,12 @@ const Payment = ({ handleFormState, formState }) => {
       } catch (e) {
         console.log(e)
       }
+      setIsLoading(false)
       return assetStatus
     }
 
     if (state.status === 'Success') {
       const res = handlePaymentConfirmation()
-      setIsLoading(false)
       handleFormState({ asset: res, payment: true })
     }
     if (state.status === 'Fail' || state.status === 'Exception') {
@@ -42,16 +44,16 @@ const Payment = ({ handleFormState, formState }) => {
 
   const handlePayment = async () => {
     setIsLoading(true)
-
+    setMessage('')
     try {
-      sendTransaction({
+      await sendTransaction({
         to: dummyReceivingWallet,
         value: utils.parseEther('0.001')
       })
     } catch (e) {
       console.log(e)
-      setIsLoading(false)
     }
+    setIsLoading(false)
   }
 
   return (

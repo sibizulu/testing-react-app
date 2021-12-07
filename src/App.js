@@ -1,7 +1,7 @@
 import React from 'react'
 import Process from './components/Process'
 
-const App = () => {
+const App = props => {
   const [isOpen, setIsOpen] = React.useState(false)
   const handlePopup = popupState => setIsOpen(popupState)
 

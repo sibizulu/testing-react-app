@@ -6,6 +6,7 @@ import { Mumbai, DAppProvider, useEthers } from '@usedapp/core'
 import { useLocalStorage } from '../hook'
 import { Modal, ModalHeader, ModalBody } from 'baseui/modal'
 import { Notification, KIND } from 'baseui/notification'
+import { truncate } from '../utils'
 
 import Login from './Login'
 import Order from './Order'
@@ -31,6 +32,10 @@ export default ({ isOpen, handlePopup }) => {
       setMessage('')
     }
   }, [current])
+
+  useEffect(() => {
+    setFormState({})
+  }, [])
 
   useEffect(() => {
     let msg = ''
@@ -66,7 +71,7 @@ export default ({ isOpen, handlePopup }) => {
             <Step
               title={
                 formState.wallet
-                  ? `Connected Wallet - ${formState.wallet}`
+                  ? `Connected Wallet - ${truncate(formState.wallet, 20)}`
                   : `Connecting Wallet`
               }>
               {!formState.wallet && <Metamask {...{ handleFormState }} />}
@@ -102,7 +107,7 @@ export default ({ isOpen, handlePopup }) => {
 
             <Step title={formState.payment ? `Payment Completed` : `Payment`}>
               {!formState.payment ? (
-                <Payment {...{ handleFormState, formState }} />
+                <Payment {...{ handleFormState, formState, setMessage }} />
               ) : (
                 <Button
                   onClick={() => {
