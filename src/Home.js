@@ -13,7 +13,7 @@ const Home = props => {
     const getAllNfts = async () => {
       try {
         const res = await allNfts({
-          status: 'all',
+          status: 'onSale',
           category: 'all',
           page: 1,
           searchterm: 'null',
@@ -39,7 +39,6 @@ const Home = props => {
       </div>
       <p className="text-base">Price : {nft.price}</p>
       <p className="text-sm">{nft.tags.toString()}</p>
-      {nft.onSale && <p className="text-sm text-gray-400">For Sale</p>}
     </div>
   ))
 

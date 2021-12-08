@@ -4,16 +4,14 @@ import { useEthers, useEtherBalance } from '@usedapp/core'
 import { formatEther } from '@ethersproject/units'
 
 const Metamask = ({ handleFormState }) => {
-  const { activateBrowserWallet, account } = useEthers()
+  const { activateBrowserWallet, account, error } = useEthers()
 
   useEffect(() => {
     handleFormState({ wallet: account })
   }, [account])
 
   const handleConnectWallet = async () => {
-    console.log('ee')
-    const res = await activateBrowserWallet()
-    console.log('done', res)
+    await activateBrowserWallet()
   }
 
   return (

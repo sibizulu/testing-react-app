@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { ProgressSteps, Step } from 'baseui/progress-steps'
 import { Button } from 'baseui/button'
 import Metamask from './Metamask'
-import { Mumbai, DAppProvider, useEthers } from '@usedapp/core'
+import {
+  Mumbai,
+  BSCTestnet,
+  Ropsten,
+  Rinkeby,
+  Goerli,
+  Kovan,
+  DAppProvider,
+  useEthers
+} from '@usedapp/core'
 import { useLocalStorage } from '../hook'
 import { Modal, ModalHeader, ModalBody } from 'baseui/modal'
 import { Notification, KIND } from 'baseui/notification'
@@ -13,12 +22,13 @@ import Order from './Order'
 import Payment from './Payment'
 
 export default ({ isOpen, handlePopup, data }) => {
-  const { account } = useEthers()
+  const { account, error } = useEthers()
   const [formState, setFormState] = useLocalStorage('formState', {})
   const [current, setCurrent] = useState(0)
   const [message, setMessage] = useState('')
 
   const config: Config = {
+    networks: [Mumbai, BSCTestnet, Ropsten, Rinkeby, Goerli, Kovan],
     readOnlyChainId: Mumbai.chainID,
     readOnlyUrls: {
       [Mumbai.chainID]: 'https://rpc-mumbai.maticvigil.com'
@@ -36,6 +46,11 @@ export default ({ isOpen, handlePopup, data }) => {
   useEffect(() => {
     setFormState({})
   }, [])
+
+  useEffect(() => {
+    if (error) setMessage('Network not supporting')
+    else setMessage('')
+  }, [error])
 
   useEffect(() => {
     let msg = ''

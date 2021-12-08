@@ -4,12 +4,24 @@ import { orderConfirm } from '../actions'
 import { useSendTransaction } from '@usedapp/core'
 import { utils } from 'ethers'
 import { dummyReceivingWallet } from '../utils'
+import { useEthers } from '@usedapp/core'
 
 const Payment = ({ handleFormState, formState, setMessage, data }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const { chainId } = useEthers()
   const { sendTransaction, state } = useSendTransaction({
     transactionName: 'Send Ethereum'
   })
+  const networks = network => {
+    const nets = {
+      97: 'BNB',
+      80001: 'MATIC',
+      3: 'ETH',
+      4: 'ETH',
+      42: 'ETH'
+    }
+    return nets[network] ? nets[network] : null
+  }
 
   useEffect(() => {
     const handlePaymentConfirmation = async () => {
@@ -34,8 +46,9 @@ const Payment = ({ handleFormState, formState, setMessage, data }) => {
     }
 
     if (state.status === 'Success') {
-      const res = handlePaymentConfirmation()
-      handleFormState({ asset: res, payment: true })
+      handlePaymentConfirmation().then(res => {
+        handleFormState({ asset: res, payment: true })
+      })
     }
     if (state.status === 'Fail' || state.status === 'Exception') {
       handleFormState({ payment: false })
@@ -46,10 +59,16 @@ const Payment = ({ handleFormState, formState, setMessage, data }) => {
     setIsLoading(true)
     setMessage('')
     try {
-      await sendTransaction({
-        to: dummyReceivingWallet,
-        value: utils.parseEther(data.price)
-      })
+      if (data?.convertedPrices[networks(chainId)]) {
+        await sendTransaction({
+          to: dummyReceivingWallet,
+          value: utils.parseEther(
+            data?.convertedPrices[networks(chainId)].toString()
+          )
+        })
+      } else {
+        throw 'Something went wrong'
+      }
     } catch (e) {
       console.log(e)
     }
@@ -57,9 +76,16 @@ const Payment = ({ handleFormState, formState, setMessage, data }) => {
   }
 
   return (
-    <div className="mb-5">
-      <Button size="compact" onClick={handlePayment} isLoading={isLoading}>
-        Pay With Crypto
+    <div className="flex gap-10 mb-5">
+      {networks(chainId) !== null && (
+        <Button size="compact" onClick={handlePayment} isLoading={isLoading}>
+          {`Pay ${data?.convertedPrices[networks(chainId)]} ${networks(
+            chainId
+          )}`}
+        </Button>
+      )}
+      <Button size="compact" disabled={true}>
+        Pay {data?.price} USD
       </Button>
     </div>
   )
