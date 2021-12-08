@@ -12,7 +12,7 @@ import Login from './Login'
 import Order from './Order'
 import Payment from './Payment'
 
-export default ({ isOpen, handlePopup }) => {
+export default ({ isOpen, handlePopup, data }) => {
   const { account } = useEthers()
   const [formState, setFormState] = useLocalStorage('formState', {})
   const [current, setCurrent] = useState(0)
@@ -95,7 +95,7 @@ export default ({ isOpen, handlePopup }) => {
 
             <Step title={formState.order ? `Order created` : `Buy Now`}>
               {!formState.order && (
-                <Order {...{ handleFormState, formState }} />
+                <Order {...{ handleFormState, formState, data }} />
               )}
               <Button
                 onClick={() => setCurrent(3)}
@@ -107,7 +107,9 @@ export default ({ isOpen, handlePopup }) => {
 
             <Step title={formState.payment ? `Payment Completed` : `Payment`}>
               {!formState.payment ? (
-                <Payment {...{ handleFormState, formState, setMessage }} />
+                <Payment
+                  {...{ handleFormState, formState, setMessage, data }}
+                />
               ) : (
                 <Button
                   onClick={() => {

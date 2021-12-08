@@ -5,7 +5,7 @@ import { useSendTransaction } from '@usedapp/core'
 import { utils } from 'ethers'
 import { dummyReceivingWallet } from '../utils'
 
-const Payment = ({ handleFormState, formState, setMessage }) => {
+const Payment = ({ handleFormState, formState, setMessage, data }) => {
   const [isLoading, setIsLoading] = useState(false)
   const { sendTransaction, state } = useSendTransaction({
     transactionName: 'Send Ethereum'
@@ -48,7 +48,7 @@ const Payment = ({ handleFormState, formState, setMessage }) => {
     try {
       await sendTransaction({
         to: dummyReceivingWallet,
-        value: utils.parseEther('0.001')
+        value: utils.parseEther(data.price)
       })
     } catch (e) {
       console.log(e)

@@ -9,3 +9,5 @@ export const orderConfirm = (data, token) =>
   http.post('/payment/sale', data, {
     headers: { Authorization: `Bearer ${token}` }
   })
+export const allNfts = data => http.post('/asset/list', data)
+export const nftDetails = id => http.get(`/asset/${id}`)
